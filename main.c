@@ -16,6 +16,7 @@ float px, py;
  * El punto tiene un tamaño de 8 píxeles y color amarillo brillante
  */
 void drawPlayer() {
+
   glColor3f(1, 1, 0); // Color amarillo (RGB)
   glPointSize(8);     // Tamaño del punto
   glBegin(GL_POINTS); // Comienza a dibujar puntos
