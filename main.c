@@ -12,8 +12,15 @@ float px, py;
 
 /**
  * drawPlayer - Dibuja la representación del jugador en la pantalla
- * Crea un punto amarillo en la posición actual del jugador (px, py)
- * El punto tiene un tamaño de 8 píxeles y color amarillo brillante
+ *
+ * Funcionamiento línea por línea:
+ * 1. glColor3f(1, 1, 0)    - Establece el color de dibujo a amarillo usando
+ * valores RGB (1,1,0)
+ * 2. glPointSize(8)        - Define el tamaño del punto a dibujar en 8 píxeles
+ * 3. glBegin(GL_POINTS)    - Inicia el modo de dibujo de puntos en OpenGL
+ * 4. glVertex2i(px, py)    - Especifica las coordenadas (px,py) donde se
+ * dibujará el punto
+ * 5. glEnd()               - Finaliza el modo de dibujo actual
  */
 void drawPlayer() {
 
@@ -35,9 +42,22 @@ int map[] = {
 
 /**
  * drawMap2D - Dibuja el mapa 2D en la pantalla
- * Recorre el array del mapa y dibuja cuadrados blancos para las paredes (1)
- * y cuadrados negros para los espacios vacíos (0)
- * Cada celda del mapa tiene un tamaño de mapS x mapS píxeles
+ *
+ * Funcionamiento línea por línea:
+ * 1. Declaración de variables x, y para iterar sobre el mapa y xo, yo para las
+ * coordenadas de dibujo
+ * 2. Bucle exterior (y) - Recorre las filas del mapa
+ * 3. Bucle interior (x) - Recorre las columnas del mapa
+ * 4. Condición if      - Verifica si la celda actual es una pared (1) o espacio
+ * vacío (0)
+ * 5. glColor3f()      - Establece el color: blanco para paredes, negro para
+ * espacios
+ * 6. Cálculo de xo, yo - Convierte coordenadas de mapa a coordenadas de
+ * pantalla
+ * 7. glBegin(GL_QUADS) - Inicia el modo de dibujo de cuadriláteros
+ * 8-11. glVertex2i()   - Define los cuatro vértices del cuadrado con offset de
+ * 1 píxel
+ * 12. glEnd()          - Finaliza el modo de dibujo de cuadriláteros
  */
 void drawMap2D() {
   int x, y, xo, yo;
@@ -51,10 +71,10 @@ void drawMap2D() {
       xo = x * mapS;
       yo = y * mapS;
       glBegin(GL_QUADS);
-      glVertex2i(xo, yo);
-      glVertex2i(xo, yo + mapS);
-      glVertex2i(xo + mapS, yo + mapS);
-      glVertex2i(xo + mapS, yo);
+      glVertex2i(xo + 1, yo + 1);
+      glVertex2i(xo + 1, yo + mapS - 1);
+      glVertex2i(xo + mapS - 1, yo + mapS - 1);
+      glVertex2i(xo + mapS - 1, yo + 1);
       glEnd();
     }
   }
@@ -62,8 +82,13 @@ void drawMap2D() {
 
 /**
  * display - Función principal de renderizado
- * Se llama automáticamente cuando se necesita redibujar la pantalla
- * Limpia la pantalla, dibuja el mapa 2D y luego dibuja al jugador
+ *
+ * Funcionamiento línea por línea:
+ * 1. glClear()         - Limpia los buffers de color y profundidad
+ * 2. drawMap2D()       - Llama a la función que dibuja el mapa 2D
+ * 3. drawPlayer()      - Llama a la función que dibuja al jugador
+ * 4. glutSwapBuffers() - Intercambia los buffers frontal y trasero para mostrar
+ * el resultado
  */
 void display() {
   glClear(GL_COLOR_BUFFER_BIT |
@@ -75,15 +100,19 @@ void display() {
 
 /**
  * buttons - Maneja las entradas del teclado para mover al jugador
- * @param key: tecla presionada
- * @param x: posición x del mouse (no utilizado)
- * @param y: posición y del mouse (no utilizado)
  *
- * Controles:
- * - 'w': mueve hacia arriba
- * - 's': mueve hacia abajo
- * - 'a': mueve hacia la izquierda
- * - 'd': mueve hacia la derecha
+ * Funcionamiento línea por línea:
+ * 1. Parámetros de entrada:
+ *    - key: código ASCII de la tecla presionada
+ *    - x, y: coordenadas del mouse (no utilizadas)
+ * 2. if (key == 'a') - Verifica si se presionó la tecla 'a' y mueve a la
+ * izquierda
+ * 3. if (key == 'd') - Verifica si se presionó la tecla 'd' y mueve a la
+ * derecha
+ * 4. if (key == 'w') - Verifica si se presionó la tecla 'w' y mueve hacia
+ * arriba
+ * 5. if (key == 's') - Verifica si se presionó la tecla 's' y mueve hacia abajo
+ * 6. glutPostRedisplay() - Solicita a GLUT que redibuje la ventana
  */
 void buttons(unsigned char key, int x, int y) {
   if (key == 'a') {
@@ -103,8 +132,14 @@ void buttons(unsigned char key, int x, int y) {
 
 /**
  * init - Inicializa la configuración gráfica
- * Establece el color de fondo, el sistema de coordenadas 2D
- * y la posición inicial del jugador
+ *
+ * Funcionamiento línea por línea:
+ * 1. glClearColor()  - Define el color de fondo de la ventana en gris (RGB:
+ * 0.3, 0.3, 0.3, 0)
+ * 2. gluOrtho2D()    - Configura la proyección ortográfica 2D (0,0) a
+ * (1024,512)
+ * 3. px = 300        - Establece la posición inicial del jugador en X
+ * 4. py = 300        - Establece la posición inicial del jugador en Y
  */
 void init() {
   glClearColor(0.3, 0.3, 0.3, 0); // Color de fondo gris
@@ -117,11 +152,19 @@ void init() {
 
 /**
  * main - Función principal del programa
- * @param argc: número de argumentos de línea de comandos
- * @param argv: array de argumentos de línea de comandos
  *
- * Inicializa GLUT, crea la ventana y establece las funciones de callback
- * para el renderizado y la entrada del teclado
+ * Funcionamiento línea por línea:
+ * 1. glutInit()           - Inicializa la biblioteca GLUT
+ * 2. glutInitDisplayMode() - Configura el modo de visualización (doble buffer y
+ * RGBA)
+ * 3. glutInitWindowSize() - Define el tamaño inicial de la ventana
+ * 4. glutCreateWindow()   - Crea la ventana con el título especificado
+ * 5. init()               - Llama a la función de inicialización personalizada
+ * 6. glutDisplayFunc()    - Registra la función de callback para el dibujado
+ * 7. glutKeyboardFunc()   - Registra la función de callback para el teclado
+ * 8. glutMainLoop()       - Inicia el bucle principal de eventos de GLUT
+ * 9. return 0            - Finaliza el programa (aunque nunca se alcanza por
+ * glutMainLoop)
  */
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);                        // Inicializa GLUT
